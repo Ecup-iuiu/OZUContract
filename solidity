@@ -1,0 +1,68 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+/**
+ * @title OZU智能合约代码白皮书示例
+ * @dev 该合约为演示用途，展示OZU项目的基本合约结构与功能
+ *      包含版本记录、简单存储与查询接口
+ */
+contract OZUContract {
+    // 合约版本
+    string public version = "1.0.0";
+    
+    // 部署者地址
+    address public owner;
+    
+    // 示例数据映射
+    mapping(string => string) private dataMap;
+
+    // 事件：数据更新
+    event DataUpdated(string key, string value);
+    // 事件：合约初始化
+    event ContractInitialized(address indexed deployer);
+
+    /**
+     * @dev 构造函数，部署时设置owner并记录初始化事件
+     */
+    constructor() {
+        owner = msg.sender;
+        emit ContractInitialized(msg.sender);
+    }
+
+    /**
+     * @dev 仅owner可更新数据
+     * @param key 数据键
+     * @param value 数据值
+     */
+    function setData(string memory key, string memory value) external {
+        require(msg.sender == owner, "Only owner can set data");
+        dataMap[key] = value;
+        emit DataUpdated(key, value);
+    }
+
+    /**
+     * @dev 公开查询数据
+     * @param key 数据键
+     * @return 对应的数据值
+     */
+    function getData(string memory key) external view returns (string memory) {
+        return dataMap[key];
+    }
+
+    /**
+     * @dev 获取合约版本
+     * @return 版本字符串
+     */
+    function getVersion() external pure returns (string memory) {
+        return "1.0.0";
+    }
+
+    /**
+     * @dev 修改合约版本（仅owner）
+     * @param newVersion 新版本号
+     */
+    function setVersion(string memory newVersion) external {
+        require(msg.sender == owner, "Only owner can change version");
+        version = newVersion;
+    }
+}
